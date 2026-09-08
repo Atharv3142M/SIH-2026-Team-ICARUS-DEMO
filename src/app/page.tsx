@@ -25,10 +25,16 @@ export default function Page() {
   };
 
   useEffect(() => {
+    if (step === 'BOOT') {
+      const timer = setTimeout(() => setStep('PROCESS'), 2000);
+      return () => clearTimeout(timer);
+    }
+
     if (step !== 'PROCESS') return;
 
     const runBoot = async () => {
       setMissionStatus('PROCESSING');
+
 
       const stages = [
         "SYNCING_TELEMETRY_GPS_IMU",
@@ -96,11 +102,6 @@ export default function Page() {
   }
 
   if (step === 'BOOT') {
-    useEffect(() => {
-        const timer = setTimeout(() => setStep('PROCESS'), 2000);
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
       <div className="h-screen w-screen bg-[#0a0c0d] flex flex-col items-center justify-center font-mono text-[#e0e6e9] text-center">
         <div className="text-6xl font-black tracking-tighter mb-2">SPATIAL_TWIN</div>
