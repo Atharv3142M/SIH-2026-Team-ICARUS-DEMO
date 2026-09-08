@@ -8,7 +8,7 @@ export default function LeftPanel() {
   const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements } = useSystemStore();
 
   return (
-    <div className="w-64 border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
+    <div className="h-full w-full border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
       <div className="p-2 bg-[#1a1d1f] border-b border-[#2d3436] text-[10px] flex justify-between opacity-60">
         <span className="tracking-tighter uppercase">System_Modules</span>
         <span className="text-[#00a8ff]">v4.2.0_STABLE</span>

@@ -36,7 +36,7 @@ export default function TopBar() {
   };
 
   return (
-    <div className="h-12 border-b border-[#2d3436] bg-[#0a0c0d] flex items-center justify-between px-4 font-mono text-[10px] text-[#dcdde1] select-none">
+    <div className="h-full border-b border-[#2d3436] bg-[#0a0c0d] flex items-center justify-between px-4 font-mono text-[10px] text-[#dcdde1] select-none">
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-3 border-r border-[#2d3436] pr-6">
           <div className={`w-2 h-2 rounded-full ${missionStatus === 'READY' ? 'bg-[#4cd137]' : 'bg-[#fbc531] animate-pulse'}`} />

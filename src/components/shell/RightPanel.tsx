@@ -16,7 +16,7 @@ export default function RightPanel() {
   };
 
   return (
-    <div className="w-64 border-l border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
+    <div className="h-full w-full border-l border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
       <div className="p-2 bg-[#1a1d1f] border-b border-[#2d3436] text-[10px] flex justify-between opacity-60">
         <span className="tracking-tighter uppercase">Telemetry_Stream</span>
         <span className="text-[#4cd137] animate-pulse font-bold">LIVE_FEED</span>

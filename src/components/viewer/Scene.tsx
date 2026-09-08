@@ -26,14 +26,25 @@ function SceneController() {
 
   useFrame((state) => {
     // Update Simulation
-    const { position, telemetry } = simEngine.update(state.clock.getDelta());
-    setDronePosition(position);
-    setTelemetry(telemetry);
+    const delta = state.clock.getDelta();
+    const { position, telemetry } = simEngine.update(delta);
+
+    // Throttle store updates to 10Hz to prevent React re-render lag
+    const now = state.clock.elapsedTime;
+    if (!state.userData.lastSimUpdate || now - state.userData.lastSimUpdate > 0.1) {
+      setDronePosition(position);
+      setTelemetry(telemetry);
+      state.userData.lastSimUpdate = now;
+    }
 
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
     if (intersects.length > 0) {
-      setCursorCoord(intersects[0].point);
+      // Cursor coordinates can be updated more frequently but still throttled
+      if (!state.userData.lastCursorUpdate || now - state.userData.lastCursorUpdate > 0.05) {
+        setCursorCoord(intersects[0].point);
+        state.userData.lastCursorUpdate = now;
+      }
     }
   });
 

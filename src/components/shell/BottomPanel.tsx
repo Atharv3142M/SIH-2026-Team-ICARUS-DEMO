@@ -37,7 +37,7 @@ export default function BottomPanel() {
   };
 
   return (
-    <div className="h-32 border-t border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#e0e6e9]">
+    <div className="h-full border-t border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#e0e6e9]">
       <div className="flex items-center gap-2 px-4 py-1 bg-[#1a1d1f] border-b border-[#2d3436] text-[9px] opacity-50 uppercase tracking-widest">
         <Terminal size={10} />
         <span>System_Console_v4.2.0</span>
