@@ -140,13 +140,21 @@ export default function Page() {
 
   return (
     <div className="h-screen w-screen grid grid-cols-[260px_1fr_260px] grid-rows-[40px_1fr_120px] bg-black overflow-hidden">
-      <TopBar />
-      <LeftPanel />
-      <div className="relative bg-black overflow-hidden">
+      <div className="col-span-3 row-start-1">
+        <TopBar />
+      </div>
+      <div className="col-start-1 row-start-2">
+        <LeftPanel />
+      </div>
+      <div className="relative bg-black overflow-hidden col-start-2 row-start-2">
         <Scene />
       </div>
-      <RightPanel />
-      <BottomPanel />
+      <div className="col-start-3 row-start-2">
+        <RightPanel />
+      </div>
+      <div className="col-span-3 row-start-3">
+        <BottomPanel />
+      </div>
     </div>
   );
 }
