@@ -38,7 +38,7 @@ export default function BottomPanel() {
   return (
     <div className="h-28 border-t border-[#3a4449] bg-[#161b1d] flex flex-col font-mono text-[#e0e6e9]">
       <div className="flex-1 overflow-y-auto p-3 text-[11px] space-y-1" ref={scrollRef}>
-        {logs.map((log, i) => (
+        {logs.map((log: any, i: number) => (
           <div key={i} className="flex gap-3 opacity-80">
             <span className="opacity-30">[{log.timestamp}]</span>
             <span className={

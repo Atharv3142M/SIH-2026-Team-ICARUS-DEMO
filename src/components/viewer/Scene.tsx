@@ -11,13 +11,13 @@ import MeasurementLine from './MeasurementLine';
 function SceneController() {
   const { setCursorCoord } = useSystemStore();
   const { raycaster, camera, scene } = useThree();
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [mouse, setMouse] = useState(new THREE.Vector2(0, 0));
 
   // Track mouse for coordinate readout
   const handleMouseMove = (e: any) => {
     const x = (e.clientX / window.innerWidth) * 2 - 1;
     const y = -(e.clientY / window.innerHeight) * 2 + 1;
-    setMouse({ x, y });
+    setMouse(new THREE.Vector2(x, y));
   };
 
   useFrame(() => {
@@ -61,7 +61,7 @@ export default function Scene() {
       </group>
 
       {measurePoints.length > 0 && (
-        <MeasurementLine points={measurePoints} />
+        <MeasurementLine />
       )}
 
       <Environment preset="city" />
