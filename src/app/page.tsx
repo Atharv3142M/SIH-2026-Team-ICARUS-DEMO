@@ -9,15 +9,25 @@ import { useSystemStore } from '@/store/useSystemStore';
 
 export default function Page() {
   const { missionStatus, setMissionStatus, addLog } = useSystemStore();
-  const [step, setStep] = useState<'BOOT' | 'PROCESS' | 'READY'>('BOOT');
+  const [step, setStep] = useState<'UPLOAD' | 'BOOT' | 'PROCESS' | 'READY'>('UPLOAD');
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file.name.toUpperCase());
+    }
+  };
+
+  const startInitialization = () => {
+    if (!selectedFile) return;
+    setStep('BOOT');
+  };
 
   useEffect(() => {
-    const runBoot = async () => {
-      setMissionStatus('BOOTING');
+    if (step !== 'PROCESS') return;
 
-      // Boot Sequence
-      await new Promise(r => setTimeout(r, 1500));
-      setStep('PROCESS');
+    const runBoot = async () => {
       setMissionStatus('PROCESSING');
 
       const stages = [
@@ -43,9 +53,54 @@ export default function Page() {
     };
 
     runBoot();
-  }, [setMissionStatus, addLog]);
+  }, [step, setMissionStatus, addLog]);
+
+  if (step === 'UPLOAD') {
+    return (
+      <div className="h-screen w-screen bg-[#0a0c0d] flex flex-col items-center justify-center font-mono text-[#e0e6e9] text-center p-4">
+        <div className="max-w-md w-full p-8 border border-[#2d3436] bg-[#161b1d] shadow-2xl">
+          <div className="text-3xl font-black tracking-tighter mb-1">SPATIAL_TWIN</div>
+          <div className="text-[10px] text-[#4da6ff] opacity-60 mb-8 tracking-widest uppercase">Data Acquisition Module</div>
+
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col items-center gap-4">
+              <label className="w-full cursor-pointer group">
+                <div className="border-2 border-dashed border-[#2d3436] group-hover:border-[#00a8ff] p-12 transition-all flex flex-col items-center gap-4 bg-[#0a0c0d]">
+                  <div className="text-4xl opacity-20 group-hover:opacity-100 transition-opacity">📁</div>
+                  <span className="text-xs opacity-50 group-hover:opacity-100">DROP_DRONE_VIDEO_OR_CLICK</span>
+                  <input type="file" className="hidden" onChange={handleFileUpload} accept="video/*" />
+                </div>
+              </label>
+              {selectedFile && (
+                <div className="text-[10px] text-[#4cd137] font-bold animate-pulse">
+                  SOURCE_LOADED: {selectedFile}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={startInitialization}
+              disabled={!selectedFile}
+              className={`py-3 px-6 text-xs font-bold tracking-widest uppercase transition-all border ${
+                selectedFile
+                ? 'bg-[#00a8ff] text-[#0a0c0d] border-[#00a8ff] cursor-pointer hover:bg-[#00d1ff]'
+                : 'bg-transparent text-[#2d3436] border-[#2d3436] cursor-not-allowed'
+              }`}
+            >
+              Initialize Reconstruction
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 'BOOT') {
+    useEffect(() => {
+        const timer = setTimeout(() => setStep('PROCESS'), 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
       <div className="h-screen w-screen bg-[#0a0c0d] flex flex-col items-center justify-center font-mono text-[#e0e6e9] text-center">
         <div className="text-6xl font-black tracking-tighter mb-2">SPATIAL_TWIN</div>
@@ -53,7 +108,7 @@ export default function Page() {
         <div className="flex flex-col gap-4">
           <div className="text-[10px] opacity-30">INITIALIZING KERNEL...</div>
           <div className="w-48 h-1 bg-[#161b1d] overflow-hidden relative">
-            <div className="absolute inset-0 bg-[#4da6ff] animate-[loading_2s_ease-in-out_infinite]" style={{ width: '30%' }} />
+            <div className="absolute inset-0 bg-[#4da6ff] animate-loading" style={{ width: '30%' }} />
           </div>
         </div>
         <style jsx>{`
@@ -75,7 +130,6 @@ export default function Page() {
             <span>STATUS: PROCESSING</span>
           </div>
           <div className="p-6 h-80 overflow-y-auto text-[11px] space-y-2" id="proc-logs">
-            {/* Logs will be rendered from Zustand store in a real app, but for the boot screen we can just use the logs store */}
             <LogView />
           </div>
         </div>

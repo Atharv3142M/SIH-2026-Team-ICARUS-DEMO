@@ -6,11 +6,12 @@ import { useSystemStore } from '@/store/useSystemStore';
 
 interface BuildingProps {
   x: number; z: number; w: number; d: number; h: number; conf: number;
-  mode: string; confFilter: string;
+  mode: string; confFilter: string; semantic?: string;
 }
 
-export default function Building({ x, z, w, d, h, conf, mode, confFilter }: BuildingProps) {
-  const { activeTool, addMeasurePoint } = useSystemStore();
+export default function Building({ x, z, w, d, h, conf, mode, confFilter, semantic = 'BUILDING' }: BuildingProps) {
+  const { activeTool, addMeasurePoint, layers } = useSystemStore();
+
 
   // The Differentiator: Observed / Inferred / Unknown
   const confidenceStatus = useMemo(() => {
@@ -31,18 +32,34 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter }: Buil
     return '#ff4444';
   }, [confidenceStatus]);
 
+  const semanticColors: Record<string, string> = {
+    BUILDING: '#00a8ff',
+    INDUSTRIAL: '#ff4444',
+    COMMERCIAL: '#fbc531',
+    RESIDENTIAL: '#4cd137',
+  };
+
+  const semanticColor = semanticColors[semantic] || '#ffffff';
+
   if (!isVisible) return null;
+
 
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
-    if (activeTool === 'DISTANCE') {
+    if (activeTool === 'DISTANCE' || activeTool === 'AREA') {
       addMeasurePoint(e.point);
     }
   };
 
   return (
     <group position={[x, h / 2, z]}>
+      {layers.semantic && (
+        <Box args={[w + 0.1, h + 0.1, d + 0.1]} position={[0, 0, 0]}>
+          <meshBasicMaterial color={semanticColor} transparent opacity={0.3} wireframe />
+        </Box>
+      )}
       {mode === 'mesh' && (
+
         <Box args={[w, h, d]} onPointerDown={handlePointerDown}>
           <meshPhongMaterial
             color={color}

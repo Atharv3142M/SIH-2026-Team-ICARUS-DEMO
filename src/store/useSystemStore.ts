@@ -64,9 +64,19 @@ export const useSystemStore = create<SystemState>((set) => ({
   setCursorCoord: (coord) => set({ cursorCoord: coord }),
 
   measurePoints: [],
-  addMeasurePoint: (point) => set((state) => ({
-    measurePoints: state.measurePoints.length < 2 ? [...state.measurePoints, point] : [point]
-  })),
+  addMeasurePoint: (point) => set((state) => {
+    if (state.activeTool === 'DISTANCE') {
+      return {
+        measurePoints: state.measurePoints.length < 2 ? [...state.measurePoints, point] : [point]
+      };
+    }
+    if (state.activeTool === 'AREA') {
+      return {
+        measurePoints: [...state.measurePoints, point]
+      };
+    }
+    return { measurePoints: [point] };
+  }),
   clearMeasurements: () => set({ measurePoints: [] }),
 
   logs: [],

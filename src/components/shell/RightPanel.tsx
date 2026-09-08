@@ -11,11 +11,11 @@ export default function RightPanel() {
   useEffect(() => {
     const timer = setInterval(() => {
       setTelemetry({
-        hdg: (Math.random() * 360).toFixed(1),
-        pit: (Math.random() * 10 - 5).toFixed(2),
-        rol: (Math.random() * 10 - 5).toFixed(2),
-        alt: (120 + Math.random() * 2).toFixed(1),
-        spd: (12 + Math.random() * 1).toFixed(1),
+        hdg: Math.random() * 360,
+        pit: Math.random() * 10 - 5,
+        rol: Math.random() * 10 - 5,
+        alt: 120 + Math.random() * 2,
+        spd: 12 + Math.random() * 1,
       });
     }, 200);
     return () => clearInterval(timer);
@@ -74,23 +74,23 @@ export default function RightPanel() {
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] font-mono">
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">HDG:</span>
-              <span>{telemetry.hdg}°</span>
+              <span>{telemetry.hdg.toFixed(1)}°</span>
             </div>
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">PIT:</span>
-              <span>{telemetry.pit}°</span>
+              <span>{telemetry.pit.toFixed(2)}°</span>
             </div>
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">ROL:</span>
-              <span>{telemetry.rol}°</span>
+              <span>{telemetry.rol.toFixed(2)}°</span>
             </div>
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">ALT:</span>
-              <span>{telemetry.alt}m</span>
+              <span>{telemetry.alt.toFixed(1)}m</span>
             </div>
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">SPD:</span>
-              <span>{telemetry.spd}m/s</span>
+              <span>{telemetry.spd.toFixed(1)}m/s</span>
             </div>
             <div className="flex justify-between border-b border-[#2d3436] pb-1">
               <span className="opacity-40">SAT:</span>

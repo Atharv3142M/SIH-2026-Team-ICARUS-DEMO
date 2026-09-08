@@ -36,7 +36,7 @@ function SceneController() {
 }
 
 export default function Scene() {
-  const { layers, activeTool, measurePoints, addMeasurePoint, clearMeasurements } = useSystemStore();
+  const { layers, activeTool, measurePoints, addMeasurePoint, clearMeasurements, confidenceFilter } = useSystemStore();
 
   return (
     <Canvas shadows dpr={[1, 2]}>
@@ -56,7 +56,7 @@ export default function Scene() {
       <group>
         <City
           mode={layers.mesh ? 'mesh' : layers.points ? 'points' : 'wireframe'}
-          confMap={layers.semantic}
+          confFilter={confidenceFilter}
         />
       </group>
 
@@ -69,22 +69,23 @@ export default function Scene() {
   );
 }
 
-function City({ mode, confMap }: { mode: string, confMap: boolean }) {
+function City({ mode, confFilter }: { mode: string, confFilter: string }) {
   const cityData = [
-    { x: -10, z: -10, w: 5, d: 5, h: 15, conf: 0.9 },
-    { x: 10, z: -15, w: 8, d: 6, h: 25, conf: 0.8 },
-    { x: -15, z: 10, w: 6, d: 8, h: 10, conf: 0.5 },
-    { x: 15, z: 10, w: 5, d: 12, h: 18, conf: 0.95 },
-    { x: 0, z: -25, w: 10, d: 10, h: 30, conf: 0.7 },
-    { x: 20, z: -5, w: 4, d: 4, h: 8, conf: 0.4 },
-    { x: -20, z: -20, w: 7, d: 7, h: 12, conf: 0.85 },
-    { x: 5, z: 15, w: 6, d: 6, h: 20, conf: 0.6 },
+    { x: -10, z: -10, w: 5, d: 5, h: 15, conf: 0.9, semantic: 'BUILDING' },
+    { x: 10, z: -15, w: 8, d: 6, h: 25, conf: 0.8, semantic: 'BUILDING' },
+    { x: -15, z: 10, w: 6, d: 8, h: 10, conf: 0.5, semantic: 'INDUSTRIAL' },
+    { x: 15, z: 10, w: 5, d: 12, h: 18, conf: 0.95, semantic: 'BUILDING' },
+    { x: 0, z: -25, w: 10, d: 10, h: 30, conf: 0.7, semantic: 'COMMERCIAL' },
+    { x: 20, z: -5, w: 4, d: 4, h: 8, conf: 0.4, semantic: 'RESIDENTIAL' },
+    { x: -20, z: -20, w: 7, d: 7, h: 12, conf: 0.85, semantic: 'BUILDING' },
+    { x: 5, z: 15, w: 6, d: 6, h: 20, conf: 0.6, semantic: 'INDUSTRIAL' },
   ];
+
 
   return (
     <>
       {cityData.map((d, i) => (
-        <Building key={i} {...d} mode={mode} confMap={confMap} />
+        <Building key={i} {...d} mode={mode} confFilter={confFilter} />
       ))}
     </>
   );

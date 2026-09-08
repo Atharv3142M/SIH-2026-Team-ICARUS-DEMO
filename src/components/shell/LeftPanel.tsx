@@ -24,20 +24,23 @@ export default function LeftPanel() {
               { id: 'semantic', label: 'SEMANTIC_LABELS', icon: <AlertTriangle size={12} /> },
               { id: 'trajectory', label: 'UAV_TRAJECTORY', icon: <div className="w-2 h-[1px] bg-white" /> },
               { id: 'grid', label: 'COORD_GRID', icon: <div className="w-2 h-2 border border-white" /> },
-            ].map((layer) => (
-              <button
-                key={layer.id}
-                onClick={() => setLayer(layer.id as any, !layers[layer.id as any])}
-                className={`flex items-center gap-3 text-left px-3 py-2 text-[10px] border transition-all ${
-                  layers[layer.id as any]
-                    ? 'bg-[#00a8ff]/10 text-[#00a8ff] border-[#00a8ff]/40'
-                    : 'bg-transparent text-[#dcdde1] border-[#2d3436] opacity-50 hover:opacity-100'
-                }`}
-              >
-                {layer.icon}
-                {layer.label}
-              </button>
-            ))}
+            ].map((layer) => {
+              const key = layer.id as keyof typeof layers;
+              return (
+                <button
+                  key={layer.id}
+                  onClick={() => setLayer(key, !layers[key])}
+                  className={`flex items-center gap-3 text-left px-3 py-2 text-[10px] border transition-all ${
+                    layers[key]
+                      ? 'bg-[#00a8ff]/10 text-[#00a8ff] border-[#00a8ff]/40'
+                      : 'bg-transparent text-[#dcdde1] border-[#2d3436] opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  {layer.icon}
+                  {layer.label}
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -87,7 +90,7 @@ export default function LeftPanel() {
         </section>
 
         <button
-          onClick={() => {}} // Store logic should handle this
+          onClick={clearMeasurements}
           className="mt-4 flex items-center justify-center gap-2 px-3 py-2 text-[10px] border border-[#ff4444] text-[#ff4444] hover:bg-[#ff4444] hover:text-white transition-all"
         >
           <Trash2 size={12} />
