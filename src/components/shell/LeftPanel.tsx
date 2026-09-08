@@ -22,19 +22,22 @@ export default function LeftPanel() {
               { id: 'mesh', label: 'SOLID_MESH' },
               { id: 'points', label: 'POINT_CLOUD' },
               { id: 'semantic', label: 'SEMANTIC_LAYER' },
-            ].map((mode) => (
-              <button
-                key={mode.id}
-                onClick={() => setLayer(mode.id as any, !layers[mode.id as any])}
-                className={`text-left px-3 py-2 text-[11px] border transition-all ${
-                  layers[mode.id as any]
-                    ? 'bg-[#4da6ff] text-[#0a0c0d] border-[#4da6ff]'
-                    : 'bg-transparent text-[#e0e6e9] border-[#3a4449] hover:bg-[#252d30]'
-                }`}
-              >
-                {mode.label}
-              </button>
-            ))}
+            ].map((mode) => {
+              const modeId = mode.id as keyof typeof layers;
+              return (
+                <button
+                  key={mode.id}
+                  onClick={() => setLayer(modeId, !layers[modeId])}
+                  className={`text-left px-3 py-2 text-[11px] border transition-all ${
+                    layers[modeId]
+                      ? 'bg-[#4da6ff] text-[#0a0c0d] border-[#4da6ff]'
+                      : 'bg-transparent text-[#e0e6e9] border-[#3a4449] hover:bg-[#252d30]'
+                  }`}
+                >
+                  {mode.label}
+                </button>
+              );
+            })}
           </div>
         </section>
 
