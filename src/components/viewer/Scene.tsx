@@ -24,7 +24,7 @@ function SceneController() {
     setMouse(new THREE.Vector2(x, y));
   };
 
-  useFrame((state) => {
+  useFrame((state: any) => {
     // Update Simulation
     const delta = state.clock.getDelta();
     const { position, telemetry } = simEngine.update(delta);
