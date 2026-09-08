@@ -4,7 +4,7 @@ import { useSystemStore } from '@/store/useSystemStore';
 import { Layers, Ruler, Maximize, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 
 export default function LeftPanel() {
-  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter } = useSystemStore();
+  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements } = useSystemStore();
 
   return (
     <div className="w-64 border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
