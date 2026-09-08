@@ -4,14 +4,18 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Grid, PerspectiveCamera, Environment, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { useSystemStore } from '@/store/useSystemStore';
+import { SimulationEngine } from '@/lib/simulation';
 import Building from './Building';
 import Terrain from './Terrain';
 import MeasurementLine from './MeasurementLine';
 
+const simEngine = new SimulationEngine();
+
 function SceneController() {
-  const { setCursorCoord } = useSystemStore();
+  const { setCursorCoord, setDronePosition, setTelemetry } = useSystemStore();
   const { raycaster, camera, scene } = useThree();
   const [mouse, setMouse] = useState(new THREE.Vector2(0, 0));
+
 
   // Track mouse for coordinate readout
   const handleMouseMove = (e: any) => {
@@ -20,7 +24,12 @@ function SceneController() {
     setMouse(new THREE.Vector2(x, y));
   };
 
-  useFrame(() => {
+  useFrame((state) => {
+    // Update Simulation
+    const { position, telemetry } = simEngine.update(state.clock.getDelta());
+    setDronePosition(position);
+    setTelemetry(telemetry);
+
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
     if (intersects.length > 0) {

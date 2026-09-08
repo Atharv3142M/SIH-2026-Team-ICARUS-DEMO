@@ -1,7 +1,8 @@
 "use client";
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
-import { Layers, Ruler, Maximize, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react';
+import { HairlineBorder, StatusIndicator, TechnicalLabel } from './TacticalUI';
 
 export default function LeftPanel() {
   const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements } = useSystemStore();
@@ -9,35 +10,59 @@ export default function LeftPanel() {
   return (
     <div className="w-64 border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
       <div className="p-2 bg-[#1a1d1f] border-b border-[#2d3436] text-[10px] flex justify-between opacity-60">
-        <span className="tracking-tighter">SYSTEM_MODULES</span>
-        <span className="text-[#00a8ff]">v4.2.0</span>
+        <span className="tracking-tighter uppercase">System_Modules</span>
+        <span className="text-[#00a8ff]">v4.2.0_STABLE</span>
       </div>
 
       <div className="p-4 flex flex-col gap-6 overflow-y-auto">
+        {/* Pipeline Monitor */}
+        <section>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Pipeline_Monitor</h3>
+          <HairlineBorder className="p-2 bg-[#0f1214] flex flex-col gap-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] opacity-60">PHOTOGRAMMETRY</span>
+              <StatusIndicator status="ACTIVE" label="RUNNING" />
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] opacity-60">MESH_GEN</span>
+              <StatusIndicator status="IDLE" label="CACHED" />
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[9px] opacity-60">SEMANTIC_SEG</span>
+              <StatusIndicator status="WARN" label="PENDING" />
+            </div>
+          </HairlineBorder>
+        </section>
+
         {/* Visualization Layers */}
         <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Layer Control</h3>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Layer_Control</h3>
           <div className="flex flex-col gap-1">
             {[
-              { id: 'mesh', label: 'SOLID_GEOMETRY', icon: <Layers size={12} /> },
-              { id: 'points', label: 'RAW_POINT_CLOUD', icon: <div className="w-1 h-1 bg-white rounded-full" /> },
-              { id: 'semantic', label: 'SEMANTIC_LABELS', icon: <AlertTriangle size={12} /> },
-              { id: 'trajectory', label: 'UAV_TRAJECTORY', icon: <div className="w-2 h-[1px] bg-white" /> },
-              { id: 'grid', label: 'COORD_GRID', icon: <div className="w-2 h-2 border border-white" /> },
+              { id: 'mesh', label: 'SOLID_GEOMETRY', icon: <Layers size={12} />, status: 'ACTIVE' },
+              { id: 'points', label: 'RAW_POINT_CLOUD', icon: <div className="w-1 h-1 bg-white rounded-full" />, status: 'ACTIVE' },
+              { id: 'semantic', label: 'SEMANTIC_LABELS', icon: <Activity size={12} />, status: 'WARN' },
+              { id: 'trajectory', label: 'UAV_TRAJECTORY', icon: <div className="w-2 h-[1px] bg-white" />, status: 'IDLE' },
+              { id: 'grid', label: 'COORD_GRID', icon: <div className="w-2 h-2 border border-white" />, status: 'ACTIVE' },
             ].map((layer) => {
               const key = layer.id as keyof typeof layers;
               return (
                 <button
                   key={layer.id}
                   onClick={() => setLayer(key, !layers[key])}
-                  className={`flex items-center gap-3 text-left px-3 py-2 text-[10px] border transition-all ${
+                  className={`group flex items-center justify-between px-3 py-2 text-[10px] border transition-all ${
                     layers[key]
                       ? 'bg-[#00a8ff]/10 text-[#00a8ff] border-[#00a8ff]/40'
                       : 'bg-transparent text-[#dcdde1] border-[#2d3436] opacity-50 hover:opacity-100'
                   }`}
                 >
-                  {layer.icon}
-                  {layer.label}
+                  <div className="flex items-center gap-3">
+                    {layer.icon}
+                    {layer.label}
+                  </div>
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                    <StatusIndicator status={layer.status as any} label="" />
+                  </div>
                 </button>
               );
             })}
@@ -46,7 +71,7 @@ export default function LeftPanel() {
 
         {/* Confidence Filter */}
         <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Confidence Filter</h3>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Confidence_Filter</h3>
           <div className="grid grid-cols-2 gap-1">
             {['ALL', 'OBSERVED', 'INFERRED', 'UNKNOWN'].map((filter) => (
               <button
@@ -66,7 +91,7 @@ export default function LeftPanel() {
 
         {/* Analysis Tools */}
         <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Metric Analysis</h3>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Metric_Analysis</h3>
           <div className="flex flex-col gap-1">
             {[
               { id: 'DISTANCE', label: 'LINEAR_DIST', icon: <Ruler size={12} /> },

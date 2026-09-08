@@ -30,6 +30,22 @@ interface SystemState {
   cursorCoord: THREE.Vector3;
   setCursorCoord: (coord: THREE.Vector3) => void;
 
+  dronePosition: THREE.Vector3;
+  setDronePosition: (pos: THREE.Vector3) => void;
+
+  telemetry: {
+    hdg: number;
+    pit: number;
+    rol: number;
+    alt: number;
+    spd: number;
+    sat: number;
+    sig: number;
+    utmE: string;
+    utmN: string;
+  } | null;
+  setTelemetry: (tel: any) => void;
+
   // Measurements
   measurePoints: THREE.Vector3[];
   addMeasurePoint: (point: THREE.Vector3) => void;
@@ -62,6 +78,12 @@ export const useSystemStore = create<SystemState>((set) => ({
 
   cursorCoord: new THREE.Vector3(0, 0, 0),
   setCursorCoord: (coord) => set({ cursorCoord: coord }),
+
+  dronePosition: new THREE.Vector3(0, 0, 0),
+  setDronePosition: (pos) => set({ dronePosition: pos }),
+
+  telemetry: null,
+  setTelemetry: (tel) => set({ telemetry: tel }),
 
   measurePoints: [],
   addMeasurePoint: (point) => set((state) => {
