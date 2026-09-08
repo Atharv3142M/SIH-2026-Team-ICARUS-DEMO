@@ -6,33 +6,37 @@ import { useSystemStore } from '@/store/useSystemStore';
 
 interface BuildingProps {
   x: number; z: number; w: number; d: number; h: number; conf: number;
-  mode: string; confMap: boolean;
+  mode: string; confFilter: string;
 }
 
-export default function Building({ x, z, w, d, h, conf, mode, confMap }: BuildingProps) {
-  const { activeTool, addMeasurePoint, logs } = useSystemStore();
+export default function Building({ x, z, w, d, h, conf, mode, confFilter }: BuildingProps) {
+  const { activeTool, addMeasurePoint } = useSystemStore();
 
-  // Use the last system log to check for highlight commands (simplification for demo)
-  const isHighlighted = useMemo(() => {
-    const lastLog = logs[logs.length - 1];
-    return lastLog?.text.includes('highlighting') && h > 10;
-  }, [logs, h]);
+  // The Differentiator: Observed / Inferred / Unknown
+  const confidenceStatus = useMemo(() => {
+    if (conf > 0.8) return 'OBSERVED';
+    if (conf > 0.4) return 'INFERRED';
+    return 'UNKNOWN';
+  }, [conf]);
+
+  // Filter visibility based on confidence
+  const isVisible = useMemo(() => {
+    if (confFilter === 'ALL') return true;
+    return confFilter === confidenceStatus;
+  }, [confFilter, confidenceStatus]);
 
   const color = useMemo(() => {
-    if (confMap) {
-      if (conf > 0.8) return '#00ff88';
-      if (conf > 0.6) return '#ffff00';
-      return '#ff0000';
-    }
-    return '#4da6ff';
-  }, [confMap, conf]);
+    if (confidenceStatus === 'OBSERVED') return '#4cd137';
+    if (confidenceStatus === 'INFERRED') return '#fbc531';
+    return '#ff4444';
+  }, [confidenceStatus]);
+
+  if (!isVisible) return null;
 
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
     if (activeTool === 'DISTANCE') {
       addMeasurePoint(e.point);
-    } else if (activeTool === 'HEIGHT') {
-      // Logic handled in store/logs
     }
   };
 
@@ -41,25 +45,24 @@ export default function Building({ x, z, w, d, h, conf, mode, confMap }: Buildin
       {mode === 'mesh' && (
         <Box args={[w, h, d]} onPointerDown={handlePointerDown}>
           <meshPhongMaterial
-            color={isHighlighted ? '#ffb400' : color}
-            emissive={isHighlighted ? '#ffb400' : '#000000'}
-            emissiveIntensity={isHighlighted ? 0.5 : 0}
+            color={color}
             transparent
-            opacity={0.7}
+            opacity={0.6}
+            shininess={100}
           />
         </Box>
       )}
 
       {mode === 'wireframe' && (
         <Box args={[w, h, d]} onPointerDown={handlePointerDown}>
-          <meshBasicMaterial color={isHighlighted ? '#ffb400' : color} wireframe transparent opacity={0.5} />
+          <meshBasicMaterial color={color} wireframe transparent opacity={0.5} />
         </Box>
       )}
 
       {mode === 'points' && (
         <Points>
           <boxGeometry args={[w, h, d]} />
-          <pointsMaterial size={0.1} color={isHighlighted ? '#ffb400' : color} />
+          <pointsMaterial size={0.1} color={color} />
         </Points>
       )}
 

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 
 export type MissionStatus = 'BOOTING' | 'PROCESSING' | 'READY';
 export type ActiveTool = 'NONE' | 'DISTANCE' | 'HEIGHT' | 'AREA';
+export type ConfidenceLayer = 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN';
 
 interface SystemState {
   // System Status
@@ -12,13 +13,18 @@ interface SystemState {
   // UI State
   activeTool: ActiveTool;
   setActiveTool: (tool: ActiveTool) => void;
+
+  // Visualization Layers
   layers: {
     mesh: boolean;
     points: boolean;
     semantic: boolean;
     grid: boolean;
+    trajectory: boolean;
   };
   setLayer: (layer: keyof SystemState['layers'], visible: boolean) => void;
+  confidenceFilter: ConfidenceLayer;
+  setConfidenceFilter: (filter: ConfidenceLayer) => void;
 
   // Telemetry / Coordinates
   cursorCoord: THREE.Vector3;
@@ -46,9 +52,13 @@ export const useSystemStore = create<SystemState>((set) => ({
     points: false,
     semantic: false,
     grid: true,
+    trajectory: true,
   },
   setLayer: (layer, visible) =>
     set((state) => ({ layers: { ...state.layers, [layer]: visible } })),
+
+  confidenceFilter: 'ALL',
+  setConfidenceFilter: (filter) => set({ confidenceFilter: filter }),
 
   cursorCoord: new THREE.Vector3(0, 0, 0),
   setCursorCoord: (coord) => set({ cursorCoord: coord }),
