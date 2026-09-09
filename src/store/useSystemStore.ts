@@ -6,6 +6,7 @@ export type MissionStatus = 'BOOTING' | 'PROCESSING' | 'READY';
 export type ActiveTool = 'NONE' | 'DISTANCE' | 'HEIGHT' | 'AREA';
 export type ConfidenceLayer = 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN';
 export type CameraMode = 'FREE' | 'ORBIT' | 'OVERHEAD' | 'FOLLOW';
+export type DroneSplatScene = 'simingshan' | 'sculpture';
 
 interface SystemState {
   // System Status
@@ -29,6 +30,9 @@ interface SystemState {
   setConfidenceFilter: (filter: ConfidenceLayer) => void;
   cameraMode: CameraMode;
   setCameraMode: (mode: CameraMode) => void;
+  droneSplatScene: DroneSplatScene;
+  setDroneSplatScene: (scene: DroneSplatScene) => void;
+  showDroneSplatScene: (scene: DroneSplatScene) => void;
 
   // Telemetry / Coordinates
   cursorCoord: THREE.Vector3;
@@ -81,6 +85,12 @@ export const useSystemStore = create<SystemState>((set) => ({
   setConfidenceFilter: (filter) => set({ confidenceFilter: filter }),
   cameraMode: 'ORBIT',
   setCameraMode: (mode) => set({ cameraMode: mode }),
+  droneSplatScene: 'simingshan',
+  setDroneSplatScene: (scene) => set({ droneSplatScene: scene }),
+  showDroneSplatScene: (scene) => set((state) => ({
+    droneSplatScene: scene,
+    layers: { ...state.layers, mesh: false, points: true },
+  })),
 
   cursorCoord: new THREE.Vector3(0, 0, 0),
   setCursorCoord: (coord) => set({ cursorCoord: coord }),

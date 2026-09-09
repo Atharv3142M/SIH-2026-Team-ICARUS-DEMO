@@ -8,6 +8,7 @@ import { SimulationEngine } from '@/lib/simulation';
 import Building from './Building';
 import Terrain from './Terrain';
 import MeasurementLine from './MeasurementLine';
+import DroneSplatCloud from './DroneSplatCloud';
 
 const simEngine = new SimulationEngine();
 
@@ -46,7 +47,7 @@ function SceneController() {
 }
 
 export default function Scene() {
-  const { layers, measurePoints, confidenceFilter, cameraMode } = useSystemStore();
+  const { layers, measurePoints, confidenceFilter, cameraMode, droneSplatScene } = useSystemStore();
 
   return (
     <Canvas shadows dpr={[1, 2]}>
@@ -64,6 +65,7 @@ export default function Scene() {
       {layers.grid && <Terrain />}
       {layers.trajectory && <FlightPath />}
       {layers.trajectory && <Drone />}
+      {layers.points && <DroneSplatCloud scene={droneSplatScene} />}
 
       <group>
         <City

@@ -5,7 +5,7 @@ import { Camera, Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react'
 import { HairlineBorder, StatusIndicator } from './TacticalUI';
 
 export default function LeftPanel() {
-  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements, setCameraMode, addLog } = useSystemStore();
+  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements, setCameraMode, addLog, droneSplatScene, showDroneSplatScene } = useSystemStore();
 
   return (
     <div className="h-full w-full border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
@@ -52,6 +52,28 @@ export default function LeftPanel() {
                 className="min-h-10 flex items-center justify-center gap-2 border border-[#2d3436] px-2 text-[9px] text-[#dcdde1] hover:border-[#00a8ff] hover:text-[#00a8ff]"
               >
                 <Camera size={11} /> {mode.label}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">DroneSplat_Source</h3>
+          <div className="grid grid-cols-2 gap-1">
+            {[
+              { id: 'simingshan', label: 'SIMINGSHAN' },
+              { id: 'sculpture', label: 'SCULPTURE' },
+            ].map((scene) => (
+              <button
+                type="button"
+                key={scene.id}
+                onClick={() => {
+                  showDroneSplatScene(scene.id as 'simingshan' | 'sculpture');
+                  addLog(`JARVIS: Loaded DroneSplat ${scene.label} sparse reconstruction.`, 'sys');
+                }}
+                className={`min-h-10 border px-2 text-[8px] font-bold transition ${droneSplatScene === scene.id ? 'border-[#4cd137] bg-[#4cd137]/10 text-[#4cd137]' : 'border-[#2d3436] text-[#dcdde1] hover:border-[#4cd137]'}`}
+              >
+                {scene.label}
               </button>
             ))}
           </div>

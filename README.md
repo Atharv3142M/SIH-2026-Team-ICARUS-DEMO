@@ -6,6 +6,12 @@ This repository is a front-end demo. It does not upload the selected video or pe
 
 The animated aircraft is a generic Mavic-class quadcopter study, informed by the Mavic 3's public aircraft specifications and official intro-video listing. It is not an official DJI model and carries no DJI branding. Reference: [DJI Mavic 3 downloads and specifications](https://www.dji.com/mavic-3/downloads).
 
+## DroneSplat integration
+
+The viewer can render the downloaded DroneSplat Simingshan and Sculpture sparse COLMAP point clouds from the local `DroneSplat/` directory. Select either scene in **DroneSplat Source** to load its real captured geometry. This is an authentic sparse reconstruction preview, not a trained 3D Gaussian Splat renderer.
+
+DroneSplat training remains an offline GPU task. Its upstream workflow requires CUDA, PyTorch, SAM2, DUSt3R, and a 7,000-iteration training run; use the upstream repository for that pipeline, then export a web-friendly artifact for production serving.
+
 ## Getting Started
 
 First, run the development server:
