@@ -5,7 +5,7 @@ import { Activity, Crosshair, ShieldCheck, Cpu, Signal } from 'lucide-react';
 import { Sparkline } from './TacticalUI';
 
 export default function TopBar() {
-  const { missionStatus, setCameraMode, addLog } = useSystemStore();
+  const { missionStatus, setCameraMode, setLayer, addLog } = useSystemStore();
   const [time, setTime] = React.useState(new Date());
 
   React.useEffect(() => {
@@ -68,6 +68,7 @@ export default function TopBar() {
         type="button"
         onClick={() => {
           setCameraMode('FOLLOW');
+          setLayer('trajectory', true);
           addLog('JARVIS: Camera linked to aircraft tracking feed.', 'sys');
         }}
         className="flex min-h-9 items-center gap-2 border border-[#00a8ff]/50 px-3 text-[9px] font-bold tracking-wider text-[#00a8ff] transition hover:bg-[#00a8ff]/10"

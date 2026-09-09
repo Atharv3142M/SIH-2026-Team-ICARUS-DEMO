@@ -8,7 +8,7 @@ import Scene from '@/components/viewer/Scene';
 import { useSystemStore } from '@/store/useSystemStore';
 
 export default function Page() {
-  const { setMissionStatus, addLog } = useSystemStore();
+  const { setMissionStatus, addLog, setCameraMode } = useSystemStore();
   const [step, setStep] = useState<'UPLOAD' | 'BOOT' | 'PROCESS' | 'READY'>('UPLOAD');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
@@ -21,11 +21,13 @@ export default function Page() {
 
   const startInitialization = () => {
     if (!selectedFile) return;
+    setCameraMode('MODEL');
     setStep('BOOT');
   };
 
   const openDemoMission = () => {
     setSelectedFile('PRELOADED_CORRIDOR_SURVEY.MP4');
+    setCameraMode('MODEL');
     setStep('BOOT');
   };
 

@@ -5,8 +5,7 @@ import type { UavTelemetry } from '@/lib/simulation';
 export type MissionStatus = 'BOOTING' | 'PROCESSING' | 'READY';
 export type ActiveTool = 'NONE' | 'DISTANCE' | 'HEIGHT' | 'AREA';
 export type ConfidenceLayer = 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN';
-export type CameraMode = 'FREE' | 'ORBIT' | 'OVERHEAD' | 'FOLLOW';
-export type DroneSplatScene = 'simingshan' | 'sculpture';
+export type CameraMode = 'FREE' | 'MODEL' | 'OVERHEAD' | 'FOLLOW';
 
 interface SystemState {
   // System Status
@@ -30,9 +29,6 @@ interface SystemState {
   setConfidenceFilter: (filter: ConfidenceLayer) => void;
   cameraMode: CameraMode;
   setCameraMode: (mode: CameraMode) => void;
-  droneSplatScene: DroneSplatScene;
-  setDroneSplatScene: (scene: DroneSplatScene) => void;
-  showDroneSplatScene: (scene: DroneSplatScene) => void;
 
   // Telemetry / Coordinates
   cursorCoord: THREE.Vector3;
@@ -76,21 +72,15 @@ export const useSystemStore = create<SystemState>((set) => ({
     points: false,
     semantic: false,
     grid: true,
-    trajectory: true,
+    trajectory: false,
   },
   setLayer: (layer, visible) =>
     set((state) => ({ layers: { ...state.layers, [layer]: visible } })),
 
   confidenceFilter: 'ALL',
   setConfidenceFilter: (filter) => set({ confidenceFilter: filter }),
-  cameraMode: 'ORBIT',
+  cameraMode: 'MODEL',
   setCameraMode: (mode) => set({ cameraMode: mode }),
-  droneSplatScene: 'simingshan',
-  setDroneSplatScene: (scene) => set({ droneSplatScene: scene }),
-  showDroneSplatScene: (scene) => set((state) => ({
-    droneSplatScene: scene,
-    layers: { ...state.layers, mesh: false, points: true },
-  })),
 
   cursorCoord: new THREE.Vector3(0, 0, 0),
   setCursorCoord: (coord) => set({ cursorCoord: coord }),

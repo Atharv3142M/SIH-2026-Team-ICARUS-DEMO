@@ -1,11 +1,11 @@
 "use client";
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
-import { Camera, Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react';
+import { Camera, Layers, Ruler, Maximize, Trash2 } from 'lucide-react';
 import { HairlineBorder, StatusIndicator } from './TacticalUI';
 
 export default function LeftPanel() {
-  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements, setCameraMode, addLog, droneSplatScene, showDroneSplatScene } = useSystemStore();
+  const { activeTool, setActiveTool, layers, setLayer, clearMeasurements, setCameraMode, addLog } = useSystemStore();
 
   return (
     <div className="h-full w-full border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
@@ -38,7 +38,7 @@ export default function LeftPanel() {
           <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Camera_Control</h3>
           <div className="grid grid-cols-2 gap-1">
             {[
-              { id: 'ORBIT', label: 'ORBIT' },
+              { id: 'MODEL', label: 'FRAME_MODEL' },
               { id: 'OVERHEAD', label: 'TOP_DOWN' },
               { id: 'FREE', label: 'FREE_NAV' },
             ].map((mode) => (
@@ -46,7 +46,7 @@ export default function LeftPanel() {
                 type="button"
                 key={mode.id}
                 onClick={() => {
-                  setCameraMode(mode.id as 'ORBIT' | 'OVERHEAD' | 'FREE');
+                  setCameraMode(mode.id as 'MODEL' | 'OVERHEAD' | 'FREE');
                   addLog(`JARVIS: ${mode.label} camera preset engaged.`, 'sys');
                 }}
                 className="min-h-10 flex items-center justify-center gap-2 border border-[#2d3436] px-2 text-[9px] text-[#dcdde1] hover:border-[#00a8ff] hover:text-[#00a8ff]"
@@ -58,35 +58,9 @@ export default function LeftPanel() {
         </section>
 
         <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">DroneSplat_Source</h3>
-          <div className="grid grid-cols-2 gap-1">
-            {[
-              { id: 'simingshan', label: 'SIMINGSHAN' },
-              { id: 'sculpture', label: 'SCULPTURE' },
-            ].map((scene) => (
-              <button
-                type="button"
-                key={scene.id}
-                onClick={() => {
-                  showDroneSplatScene(scene.id as 'simingshan' | 'sculpture');
-                  addLog(`JARVIS: Loaded DroneSplat ${scene.label} sparse reconstruction.`, 'sys');
-                }}
-                className={`min-h-10 border px-2 text-[8px] font-bold transition ${droneSplatScene === scene.id ? 'border-[#4cd137] bg-[#4cd137]/10 text-[#4cd137]' : 'border-[#2d3436] text-[#dcdde1] hover:border-[#4cd137]'}`}
-              >
-                {scene.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* Visualization Layers */}
-        <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Layer_Control</h3>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Scene_Layers</h3>
           <div className="flex flex-col gap-1">
             {[
-              { id: 'mesh', label: 'SOLID_GEOMETRY', icon: <Layers size={12} />, status: 'ACTIVE' },
-              { id: 'points', label: 'RAW_POINT_CLOUD', icon: <div className="w-1 h-1 bg-white rounded-full" />, status: 'ACTIVE' },
-              { id: 'semantic', label: 'SEMANTIC_LABELS', icon: <Activity size={12} />, status: 'WARN' },
               { id: 'trajectory', label: 'UAV_TRAJECTORY', icon: <div className="w-2 h-[1px] bg-white" />, status: 'IDLE' },
               { id: 'grid', label: 'COORD_GRID', icon: <div className="w-2 h-2 border border-white" />, status: 'ACTIVE' },
             ].map((layer) => {
@@ -111,26 +85,6 @@ export default function LeftPanel() {
                 </button>
               );
             })}
-          </div>
-        </section>
-
-        {/* Confidence Filter */}
-        <section>
-          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Confidence_Filter</h3>
-          <div className="grid grid-cols-2 gap-1">
-            {['ALL', 'OBSERVED', 'INFERRED', 'UNKNOWN'].map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setConfidenceFilter(filter as 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN')}
-                className={`px-2 py-1 text-[9px] border transition-all ${
-                  confidenceFilter === filter
-                    ? 'bg-[#dcdde1] text-[#0a0c0d] border-[#dcdde1]'
-                    : 'bg-transparent text-[#dcdde1] border-[#2d3436] opacity-50 hover:opacity-100'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
           </div>
         </section>
 
