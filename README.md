@@ -4,6 +4,8 @@ Spatial Twin is an interactive prototype for demonstrating a UAV-derived spatial
 
 This repository is a front-end demo. It does not upload the selected video or perform real photogrammetry, object detection, or geospatial processing.
 
+The animated aircraft is a generic Mavic-class quadcopter study, informed by the Mavic 3's public aircraft specifications and official intro-video listing. It is not an official DJI model and carries no DJI branding. Reference: [DJI Mavic 3 downloads and specifications](https://www.dji.com/mavic-3/downloads).
+
 ## Getting Started
 
 First, run the development server:

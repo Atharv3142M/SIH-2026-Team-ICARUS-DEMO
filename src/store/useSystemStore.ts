@@ -5,6 +5,7 @@ import type { UavTelemetry } from '@/lib/simulation';
 export type MissionStatus = 'BOOTING' | 'PROCESSING' | 'READY';
 export type ActiveTool = 'NONE' | 'DISTANCE' | 'HEIGHT' | 'AREA';
 export type ConfidenceLayer = 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN';
+export type CameraMode = 'FREE' | 'ORBIT' | 'OVERHEAD' | 'FOLLOW';
 
 interface SystemState {
   // System Status
@@ -26,6 +27,8 @@ interface SystemState {
   setLayer: (layer: keyof SystemState['layers'], visible: boolean) => void;
   confidenceFilter: ConfidenceLayer;
   setConfidenceFilter: (filter: ConfidenceLayer) => void;
+  cameraMode: CameraMode;
+  setCameraMode: (mode: CameraMode) => void;
 
   // Telemetry / Coordinates
   cursorCoord: THREE.Vector3;
@@ -76,6 +79,8 @@ export const useSystemStore = create<SystemState>((set) => ({
 
   confidenceFilter: 'ALL',
   setConfidenceFilter: (filter) => set({ confidenceFilter: filter }),
+  cameraMode: 'ORBIT',
+  setCameraMode: (mode) => set({ cameraMode: mode }),
 
   cursorCoord: new THREE.Vector3(0, 0, 0),
   setCursorCoord: (coord) => set({ cursorCoord: coord }),

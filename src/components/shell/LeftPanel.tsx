@@ -1,11 +1,11 @@
 "use client";
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
-import { Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react';
+import { Camera, Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react';
 import { HairlineBorder, StatusIndicator } from './TacticalUI';
 
 export default function LeftPanel() {
-  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements } = useSystemStore();
+  const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements, setCameraMode, addLog } = useSystemStore();
 
   return (
     <div className="h-full w-full border-r border-[#2d3436] bg-[#0a0c0d] flex flex-col font-mono text-[#dcdde1]">
@@ -32,6 +32,29 @@ export default function LeftPanel() {
               <StatusIndicator status="WARN" label="PENDING" />
             </div>
           </HairlineBorder>
+        </section>
+
+        <section>
+          <h3 className="text-[9px] opacity-30 mb-3 tracking-widest uppercase font-bold">Camera_Control</h3>
+          <div className="grid grid-cols-2 gap-1">
+            {[
+              { id: 'ORBIT', label: 'ORBIT' },
+              { id: 'OVERHEAD', label: 'TOP_DOWN' },
+              { id: 'FREE', label: 'FREE_NAV' },
+            ].map((mode) => (
+              <button
+                type="button"
+                key={mode.id}
+                onClick={() => {
+                  setCameraMode(mode.id as 'ORBIT' | 'OVERHEAD' | 'FREE');
+                  addLog(`JARVIS: ${mode.label} camera preset engaged.`, 'sys');
+                }}
+                className="min-h-10 flex items-center justify-center gap-2 border border-[#2d3436] px-2 text-[9px] text-[#dcdde1] hover:border-[#00a8ff] hover:text-[#00a8ff]"
+              >
+                <Camera size={11} /> {mode.label}
+              </button>
+            ))}
+          </div>
         </section>
 
         {/* Visualization Layers */}
@@ -100,7 +123,11 @@ export default function LeftPanel() {
             ].map((tool) => (
               <button
                 key={tool.id}
-                onClick={() => setActiveTool(tool.id as 'DISTANCE' | 'HEIGHT' | 'AREA')}
+                onClick={() => {
+                  setActiveTool(tool.id as 'DISTANCE' | 'HEIGHT' | 'AREA');
+                  clearMeasurements();
+                  addLog(`JARVIS: ${tool.label} measurement mode armed.`, 'sys');
+                }}
                 className={`flex items-center gap-3 text-left px-3 py-2 text-[10px] border transition-all ${
                   activeTool === tool.id
                     ? 'bg-[#fbc531] text-[#0a0c0d] border-[#fbc531]'
@@ -119,7 +146,7 @@ export default function LeftPanel() {
           className="mt-4 flex items-center justify-center gap-2 px-3 py-2 text-[10px] border border-[#ff4444] text-[#ff4444] hover:bg-[#ff4444] hover:text-white transition-all"
         >
           <Trash2 size={12} />
-          PURGE_MARKERS
+          CLEAR_MEASUREMENTS
         </button>
       </div>
     </div>

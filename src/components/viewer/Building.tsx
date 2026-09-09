@@ -83,7 +83,7 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
 
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
-    if (activeTool === 'DISTANCE' || activeTool === 'AREA') {
+    if (activeTool === 'DISTANCE' || activeTool === 'AREA' || activeTool === 'HEIGHT') {
       addMeasurePoint(e.point);
     }
   };

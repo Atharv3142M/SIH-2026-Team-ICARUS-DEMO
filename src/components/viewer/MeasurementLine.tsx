@@ -8,8 +8,24 @@ export default function MeasurementLine() {
   const { measurePoints, activeTool } = useSystemStore();
 
   const isArea = activeTool === 'AREA';
+  const isHeight = activeTool === 'HEIGHT';
 
   const { points, label, center } = useMemo(() => {
+    if (measurePoints.length === 0) {
+      return { points: [], label: '', center: new THREE.Vector3() };
+    }
+    if (isHeight) {
+      const point = measurePoints[0];
+      const base = new THREE.Vector3(point.x, 0, point.z);
+      return {
+        points: [base, point],
+        label: `${point.y.toFixed(2)}m high`,
+        center: base.lerp(point, 0.5),
+      };
+    }
+    if (measurePoints.length < 2) {
+      return { points: [], label: '', center: measurePoints[0] };
+    }
     if (!isArea) {
       const p1 = measurePoints[0];
       const p2 = measurePoints[1];
@@ -41,21 +57,21 @@ export default function MeasurementLine() {
         center
       };
     }
-  }, [measurePoints, isArea]);
+  }, [measurePoints, isArea, isHeight]);
 
-  if (measurePoints.length < 2) return null;
+  if ((!isHeight && measurePoints.length < 2) || points.length === 0) return null;
 
   return (
     <group>
       <Line
         points={points}
-        color={isArea ? "#fbc531" : "#ffb400"}
+        color={isArea ? "#fbc531" : isHeight ? "#4cd137" : "#ffb400"}
         lineWidth={2}
       />
       <Text
         position={center}
         fontSize={0.6}
-        color={isArea ? "#fbc531" : "#ffb400"}
+        color={isArea ? "#fbc531" : isHeight ? "#4cd137" : "#ffb400"}
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.02}

@@ -1,11 +1,11 @@
 "use client";
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
-import { Activity, ShieldCheck, Cpu, Signal } from 'lucide-react';
+import { Activity, Crosshair, ShieldCheck, Cpu, Signal } from 'lucide-react';
 import { Sparkline } from './TacticalUI';
 
 export default function TopBar() {
-  const { missionStatus } = useSystemStore();
+  const { missionStatus, setCameraMode, addLog } = useSystemStore();
   const [time, setTime] = React.useState(new Date());
 
   React.useEffect(() => {
@@ -63,6 +63,18 @@ export default function TopBar() {
           </div>
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          setCameraMode('FOLLOW');
+          addLog('JARVIS: Camera linked to aircraft tracking feed.', 'sys');
+        }}
+        className="flex min-h-9 items-center gap-2 border border-[#00a8ff]/50 px-3 text-[9px] font-bold tracking-wider text-[#00a8ff] transition hover:bg-[#00a8ff]/10"
+      >
+        <Crosshair size={12} />
+        TRACK_UAV
+      </button>
 
       <div className="hidden items-center gap-8 xl:flex">
         <div className="flex items-center gap-4 border-l border-[#2d3436] pl-6">

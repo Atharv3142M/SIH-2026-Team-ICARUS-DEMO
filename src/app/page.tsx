@@ -24,6 +24,11 @@ export default function Page() {
     setStep('BOOT');
   };
 
+  const openDemoMission = () => {
+    setSelectedFile('PRELOADED_CORRIDOR_SURVEY.MP4');
+    setStep('BOOT');
+  };
+
   useEffect(() => {
     if (step === 'BOOT') {
       const timer = setTimeout(() => setStep('PROCESS'), 2000);
@@ -95,6 +100,13 @@ export default function Page() {
               }`}
             >
               Initialize Reconstruction
+            </button>
+            <button
+              type="button"
+              onClick={openDemoMission}
+              className="min-h-11 border border-[#4da6ff]/60 px-6 text-xs font-bold tracking-widest uppercase text-[#4da6ff] transition hover:bg-[#4da6ff]/10"
+            >
+              Open Preloaded Demo
             </button>
           </div>
         </div>

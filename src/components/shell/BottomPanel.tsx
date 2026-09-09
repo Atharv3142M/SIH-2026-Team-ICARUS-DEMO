@@ -5,7 +5,7 @@ import { Terminal, ChevronRight } from 'lucide-react';
 
 export default function BottomPanel() {
   const [input, setInput] = useState('');
-  const { logs, addLog } = useSystemStore();
+  const { logs, addLog, setLayer, setCameraMode, setActiveTool, clearMeasurements } = useSystemStore();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,15 +23,47 @@ export default function BottomPanel() {
     setInput('');
 
     const lowerCmd = cmd.toLowerCase();
-    if (lowerCmd.includes('highlight buildings above 10')) {
+    if (lowerCmd.includes('help') || lowerCmd === '?') {
+      addLog('JARVIS COMMANDS: accuracy | tallest | show/hide points | show/hide labels | follow drone | overhead | measure distance | measure height | clear measurements', 'sys');
+    } else if (lowerCmd.includes('highlight buildings above 10')) {
       addLog('QUERY_MATCH: Identifying structures > 10m...', 'sys');
       setTimeout(() => addLog('SENSING_COMPLETE: Entities highlighted in amber.', 'sys'), 1000);
+    } else if (lowerCmd.includes('show points')) {
+      setLayer('points', true);
+      setLayer('mesh', false);
+      addLog('JARVIS: Raw point cloud enabled.', 'sys');
+    } else if (lowerCmd.includes('hide points')) {
+      setLayer('points', false);
+      addLog('JARVIS: Raw point cloud hidden.', 'sys');
+    } else if (lowerCmd.includes('show labels') || lowerCmd.includes('show semantic')) {
+      setLayer('semantic', true);
+      addLog('JARVIS: Semantic overlays enabled.', 'sys');
+    } else if (lowerCmd.includes('hide labels') || lowerCmd.includes('hide semantic')) {
+      setLayer('semantic', false);
+      addLog('JARVIS: Semantic overlays hidden.', 'sys');
+    } else if (lowerCmd.includes('follow') || lowerCmd.includes('track drone')) {
+      setCameraMode('FOLLOW');
+      addLog('JARVIS: Tracking the aircraft.', 'sys');
+    } else if (lowerCmd.includes('overhead') || lowerCmd.includes('top down')) {
+      setCameraMode('OVERHEAD');
+      addLog('JARVIS: Overhead survey view engaged.', 'sys');
+    } else if (lowerCmd.includes('measure height')) {
+      clearMeasurements();
+      setActiveTool('HEIGHT');
+      addLog('JARVIS: Height probe armed. Click a building roof.', 'sys');
+    } else if (lowerCmd.includes('measure distance')) {
+      clearMeasurements();
+      setActiveTool('DISTANCE');
+      addLog('JARVIS: Distance tool armed. Click two building points.', 'sys');
+    } else if (lowerCmd.includes('clear measurement')) {
+      clearMeasurements();
+      addLog('JARVIS: Measurements cleared.', 'sys');
     } else if (lowerCmd.includes('accuracy') || lowerCmd.includes('rmse')) {
       addLog('DATA_DUMP: RMSE=0.43m | COVERAGE=92.1% | CONF=HIGH', 'sys');
     } else if (lowerCmd.includes('tallest')) {
       addLog('QUERY_MATCH: Tallest entity detected at 30.0m', 'sys');
     } else {
-      addLog('UNKNOWN_COMMAND: Try "accuracy" or "highlight buildings above 10m"', 'warn');
+      addLog('JARVIS: I did not understand that. Type "help" for supported demo commands.', 'warn');
     }
   };
 
@@ -77,7 +109,7 @@ export default function BottomPanel() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="AWAITING_INPUT..."
+          placeholder="ASK JARVIS: TRY ‘HELP’"
           className="flex-1 bg-transparent border-none outline-none text-[12px] font-mono text-[#e0e6e9] placeholder:opacity-20"
           autoFocus
         />
