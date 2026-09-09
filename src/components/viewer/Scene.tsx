@@ -1,8 +1,7 @@
 "use client";
-import React, { useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Grid, PerspectiveCamera, Environment, Float } from '@react-three/drei';
-import * as THREE from 'three';
+import React from 'react';
+import { Canvas, useFrame, type RootState } from '@react-three/fiber';
+import { Line, OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import { useSystemStore } from '@/store/useSystemStore';
 import { SimulationEngine } from '@/lib/simulation';
 import Building from './Building';
@@ -12,51 +11,28 @@ import MeasurementLine from './MeasurementLine';
 const simEngine = new SimulationEngine();
 
 function SceneController() {
-  const { setCursorCoord, setDronePosition, setTelemetry } = useSystemStore();
-  const { raycaster, camera, scene } = useThree();
-  const [mouse, setMouse] = useState(new THREE.Vector2(0, 0));
+  const { setDronePosition, setTelemetry } = useSystemStore();
+  const lastSimUpdate = React.useRef(0);
 
-
-  // Track mouse for coordinate readout
-  const handleMouseMove = (e: any) => {
-    const x = (e.clientX / window.innerWidth) * 2 - 1;
-    const y = -(e.clientY / window.innerHeight) * 2 + 1;
-    setMouse(new THREE.Vector2(x, y));
-  };
-
-  useFrame((state: any) => {
+  useFrame((state: RootState) => {
     // Update Simulation
     const delta = state.clock.getDelta();
     const { position, telemetry } = simEngine.update(delta);
 
     // Throttle store updates to 10Hz to prevent React re-render lag
     const now = state.clock.elapsedTime;
-    if (!state.userData.lastSimUpdate || now - state.userData.lastSimUpdate > 0.1) {
+    if (now - lastSimUpdate.current > 0.1) {
       setDronePosition(position);
       setTelemetry(telemetry);
-      state.userData.lastSimUpdate = now;
+      lastSimUpdate.current = now;
     }
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children, true);
-    if (intersects.length > 0) {
-      // Cursor coordinates can be updated more frequently but still throttled
-      if (!state.userData.lastCursorUpdate || now - state.userData.lastCursorUpdate > 0.05) {
-        setCursorCoord(intersects[0].point);
-        state.userData.lastCursorUpdate = now;
-      }
-    }
   });
-
-  return (
-    <mesh onPointerMove={handleMouseMove} visible={false}>
-      <planeGeometry args={[1000, 1000]} />
-    </mesh>
-  );
+  return null;
 }
 
 export default function Scene() {
-  const { layers, activeTool, measurePoints, addMeasurePoint, clearMeasurements, confidenceFilter } = useSystemStore();
+  const { layers, measurePoints, confidenceFilter } = useSystemStore();
 
   return (
     <Canvas shadows dpr={[1, 2]}>
@@ -72,6 +48,8 @@ export default function Scene() {
       <SceneController />
 
       {layers.grid && <Terrain />}
+      {layers.trajectory && <FlightPath />}
+      {layers.trajectory && <Drone />}
 
       <group>
         <City
@@ -84,9 +62,33 @@ export default function Scene() {
         <MeasurementLine />
       )}
 
-      <Environment preset="city" />
     </Canvas>
   );
+}
+
+function Drone() {
+  const dronePosition = useSystemStore((state) => state.dronePosition);
+
+  return (
+    <group position={dronePosition.toArray()}>
+      <mesh rotation={[0, Math.PI / 4, 0]}>
+        <octahedronGeometry args={[1.1, 0]} />
+        <meshStandardMaterial color="#00a8ff" emissive="#003d5c" metalness={0.7} roughness={0.25} />
+      </mesh>
+      <mesh position={[0, -1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.5, 0.56, 24]} />
+        <meshBasicMaterial color="#00a8ff" transparent opacity={0.5} />
+      </mesh>
+    </group>
+  );
+}
+
+function FlightPath() {
+  const points = [
+    [-50, 20, -50], [50, 25, -50], [50, 20, 50], [-50, 30, 50], [-50, 20, -50],
+  ] as [number, number, number][];
+
+  return <Line points={points} color="#00a8ff" transparent opacity={0.55} lineWidth={1} dashed dashSize={2} gapSize={1} />;
 }
 
 function City({ mode, confFilter }: { mode: string, confFilter: string }) {

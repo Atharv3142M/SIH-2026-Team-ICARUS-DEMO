@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
 import { Terminal, ChevronRight } from 'lucide-react';
-import { HairlineBorder } from './TacticalUI';
 
 export default function BottomPanel() {
   const [input, setInput] = useState('');
@@ -45,7 +44,7 @@ export default function BottomPanel() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 text-[11px] space-y-1" ref={scrollRef}>
-        {logs.map((log: any, i: number) => (
+        {logs.map((log, i) => (
           <div key={i} className="flex gap-3 opacity-80 group">
             <span className="opacity-30 shrink-0 text-[9px]">{log.timestamp}</span>
             <div className="flex gap-2">

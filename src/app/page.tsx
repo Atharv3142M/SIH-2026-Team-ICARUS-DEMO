@@ -8,7 +8,7 @@ import Scene from '@/components/viewer/Scene';
 import { useSystemStore } from '@/store/useSystemStore';
 
 export default function Page() {
-  const { missionStatus, setMissionStatus, addLog } = useSystemStore();
+  const { setMissionStatus, addLog } = useSystemStore();
   const [step, setStep] = useState<'UPLOAD' | 'BOOT' | 'PROCESS' | 'READY'>('UPLOAD');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
@@ -66,14 +66,15 @@ export default function Page() {
       <div className="h-screen w-screen bg-[#0a0c0d] flex flex-col items-center justify-center font-mono text-[#e0e6e9] text-center p-4">
         <div className="max-w-md w-full p-8 border border-[#2d3436] bg-[#161b1d] shadow-2xl">
           <div className="text-3xl font-black tracking-tighter mb-1">SPATIAL_TWIN</div>
-          <div className="text-[10px] text-[#4da6ff] opacity-60 mb-8 tracking-widest uppercase">Data Acquisition Module</div>
+          <p className="text-[10px] text-[#4da6ff] opacity-60 mb-3 tracking-widest uppercase">Data Acquisition Module</p>
+          <p className="text-xs text-[#dcdde1] opacity-60 mb-8">Use any local video to run the simulated reconstruction workflow.</p>
 
           <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-4">
-              <label className="w-full cursor-pointer group">
+              <label className="w-full cursor-pointer group" aria-label="Choose a drone video">
                 <div className="border-2 border-dashed border-[#2d3436] group-hover:border-[#00a8ff] p-12 transition-all flex flex-col items-center gap-4 bg-[#0a0c0d]">
                   <div className="text-4xl opacity-20 group-hover:opacity-100 transition-opacity">📁</div>
-                  <span className="text-xs opacity-50 group-hover:opacity-100">DROP_DRONE_VIDEO_OR_CLICK</span>
+                  <span className="text-xs opacity-50 group-hover:opacity-100">CHOOSE_DRONE_VIDEO</span>
                   <input type="file" className="hidden" onChange={handleFileUpload} accept="video/*" />
                 </div>
               </label>
@@ -139,20 +140,20 @@ export default function Page() {
   }
 
   return (
-    <div className="h-screen w-screen grid grid-cols-[260px_1fr_260px] grid-rows-[40px_1fr_120px] bg-black overflow-hidden">
+    <div className="min-h-screen bg-black lg:h-screen lg:overflow-hidden grid grid-cols-1 grid-rows-[auto_auto_minmax(26rem,1fr)_auto_auto] lg:grid-cols-[260px_minmax(0,1fr)_260px] lg:grid-rows-[40px_minmax(0,1fr)_120px]">
       <div className="col-span-3 row-start-1">
         <TopBar />
       </div>
-      <div className="col-start-1 row-start-2">
+      <div className="col-start-1 row-start-2 lg:row-start-2">
         <LeftPanel />
       </div>
-      <div className="relative bg-black overflow-hidden col-start-2 row-start-2">
+      <div className="relative bg-black overflow-hidden col-start-1 row-start-3 lg:col-start-2 lg:row-start-2">
         <Scene />
       </div>
-      <div className="col-start-3 row-start-2">
+      <div className="col-start-1 row-start-4 lg:col-start-3 lg:row-start-2">
         <RightPanel />
       </div>
-      <div className="col-span-3 row-start-3">
+      <div className="col-start-1 row-start-5 lg:col-span-3 lg:row-start-3">
         <BottomPanel />
       </div>
     </div>
@@ -163,7 +164,7 @@ function LogView() {
   const { logs } = useSystemStore();
   return (
     <div className="space-y-1">
-      {logs.map((log: any, i: number) => (
+      {logs.map((log, i) => (
         <div key={i} className={`flex gap-3 ${log.type === 'sys' ? 'text-[#4da6ff]' : 'text-[#e0e6e9] opacity-70'}`}>
           <span className="opacity-30">[{log.timestamp}]</span>
           <span>{log.text}</span>

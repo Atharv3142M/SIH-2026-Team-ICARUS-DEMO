@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo } from 'react';
-import { Box, Points, Sphere } from '@react-three/drei';
+import { Box, Points } from '@react-three/drei';
+import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useSystemStore } from '@/store/useSystemStore';
 
@@ -10,7 +11,7 @@ interface BuildingProps {
 }
 
 export default function Building({ x, z, w, d, h, conf, mode, confFilter, semantic = 'BUILDING' }: BuildingProps) {
-  const { activeTool, addMeasurePoint, layers } = useSystemStore();
+  const { activeTool, addMeasurePoint, layers, setCursorCoord } = useSystemStore();
 
 
   // The Differentiator: Observed / Inferred / Unknown
@@ -37,11 +38,12 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
     const geo = new THREE.BoxGeometry(w, h, d);
     const pos = geo.attributes.position;
     for (let i = 0; i < pos.count; i++) {
+      const jitter = (seed: number) => (Math.sin(seed * 12.9898) * 43758.5453 % 1 - 0.5) * 0.05;
       pos.setXYZ(
         i,
-        pos.getX(i) + (Math.random() - 0.5) * 0.05,
-        pos.getY(i) + (Math.random() - 0.5) * 0.05,
-        pos.getZ(i) + (Math.random() - 0.5) * 0.05
+        pos.getX(i) + jitter(i),
+        pos.getY(i) + jitter(i + 100),
+        pos.getZ(i) + jitter(i + 200)
       );
     }
     pos.needsUpdate = true;
@@ -52,13 +54,13 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
     for (let i = 0; i < numPointsPerFace * 6; i++) {
       const face = i % 6;
       let px = 0, py = 0, pz = 0;
-      const rand = () => Math.random();
-      if (face === 0) { px = w/2; py = (rand()-0.5)*h; pz = (rand()-0.5)*d; }
-      else if (face === 1) { px = -w/2; py = (rand()-0.5)*h; pz = (rand()-0.5)*d; }
-      else if (face === 2) { py = h/2; px = (rand()-0.5)*w; pz = (rand()-0.5)*d; }
-      else if (face === 3) { py = -h/2; px = (rand()-0.5)*w; pz = (rand()-0.5)*d; }
-      else if (face === 4) { pz = d/2; px = (rand()-0.5)*w; py = (rand()-0.5)*h; }
-      else { pz = -d/2; px = (rand()-0.5)*w; py = (rand()-0.5)*h; }
+      const rand = (offset: number) => (Math.sin((i + 1) * (offset + 1) * 12.9898) * 43758.5453) % 1;
+      if (face === 0) { px = w/2; py = (rand(1)-0.5)*h; pz = (rand(2)-0.5)*d; }
+      else if (face === 1) { px = -w/2; py = (rand(3)-0.5)*h; pz = (rand(4)-0.5)*d; }
+      else if (face === 2) { py = h/2; px = (rand(5)-0.5)*w; pz = (rand(6)-0.5)*d; }
+      else if (face === 3) { py = -h/2; px = (rand(7)-0.5)*w; pz = (rand(8)-0.5)*d; }
+      else if (face === 4) { pz = d/2; px = (rand(9)-0.5)*w; py = (rand(10)-0.5)*h; }
+      else { pz = -d/2; px = (rand(11)-0.5)*w; py = (rand(12)-0.5)*h; }
       points.push(px, py, pz);
     }
     const pGeo = new THREE.BufferGeometry();
@@ -79,11 +81,16 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
   if (!isVisible) return null;
 
 
-  const handlePointerDown = (e: any) => {
+  const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     if (activeTool === 'DISTANCE' || activeTool === 'AREA') {
       addMeasurePoint(e.point);
     }
+  };
+
+  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+    setCursorCoord(e.point);
   };
 
   return (
@@ -95,7 +102,7 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
       )}
       {mode === 'mesh' && (
 
-        <group onPointerDown={handlePointerDown}>
+        <group onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}>
           <mesh geometry={jitteredGeometry}>
             <meshStandardMaterial
               color={color}
@@ -112,13 +119,13 @@ export default function Building({ x, z, w, d, h, conf, mode, confFilter, semant
       )}
 
       {mode === 'wireframe' && (
-        <mesh geometry={jitteredGeometry} onPointerDown={handlePointerDown}>
+        <mesh geometry={jitteredGeometry} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}>
           <meshBasicMaterial color={color} wireframe transparent opacity={0.5} />
         </mesh>
       )}
 
       {mode === 'points' && (
-        <Points geometry={pointCloudGeometry}>
+        <Points geometry={pointCloudGeometry} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove}>
           <pointsMaterial size={0.08} color={color} transparent opacity={0.8} />
         </Points>
       )}

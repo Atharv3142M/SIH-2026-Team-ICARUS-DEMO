@@ -1,15 +1,15 @@
 "use client";
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
-import { Activity, ShieldCheck, Cpu, Database, Signal } from 'lucide-react';
-import { HairlineBorder, Sparkline, TechnicalLabel } from './TacticalUI';
+import { Activity, ShieldCheck, Cpu, Signal } from 'lucide-react';
+import { Sparkline } from './TacticalUI';
 
 export default function TopBar() {
   const { missionStatus } = useSystemStore();
   const [time, setTime] = React.useState(new Date());
 
   React.useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 100);
+    const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -36,8 +36,8 @@ export default function TopBar() {
   };
 
   return (
-    <div className="h-full border-b border-[#2d3436] bg-[#0a0c0d] flex items-center justify-between px-4 font-mono text-[10px] text-[#dcdde1] select-none">
-      <div className="flex items-center gap-6">
+    <header className="min-h-10 border-b border-[#2d3436] bg-[#0a0c0d] flex flex-wrap items-center justify-between gap-3 px-4 py-2 font-mono text-[10px] text-[#dcdde1] select-none lg:h-full lg:flex-nowrap lg:py-0">
+      <div className="flex items-center gap-3 sm:gap-6">
         <div className="flex items-center gap-3 border-r border-[#2d3436] pr-6">
           <div className={`w-2 h-2 rounded-full ${missionStatus === 'READY' ? 'bg-[#4cd137]' : 'bg-[#fbc531] animate-pulse'}`} />
           <div className="flex flex-col leading-none">
@@ -64,7 +64,7 @@ export default function TopBar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-8">
+      <div className="hidden items-center gap-8 xl:flex">
         <div className="flex items-center gap-4 border-l border-[#2d3436] pl-6">
           <div className="flex items-center gap-3">
             <Cpu size={12} className="opacity-40" />
@@ -96,6 +96,6 @@ export default function TopBar() {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

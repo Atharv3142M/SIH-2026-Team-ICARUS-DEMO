@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import * as THREE from 'three';
+import type { UavTelemetry } from '@/lib/simulation';
 
 export type MissionStatus = 'BOOTING' | 'PROCESSING' | 'READY';
 export type ActiveTool = 'NONE' | 'DISTANCE' | 'HEIGHT' | 'AREA';
@@ -44,7 +45,7 @@ interface SystemState {
     utmE: string;
     utmN: string;
   } | null;
-  setTelemetry: (tel: any) => void;
+  setTelemetry: (tel: UavTelemetry) => void;
 
   // Measurements
   measurePoints: THREE.Vector3[];

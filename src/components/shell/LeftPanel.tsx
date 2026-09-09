@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSystemStore } from '@/store/useSystemStore';
 import { Layers, Ruler, Maximize, Trash2, Activity } from 'lucide-react';
-import { HairlineBorder, StatusIndicator, TechnicalLabel } from './TacticalUI';
+import { HairlineBorder, StatusIndicator } from './TacticalUI';
 
 export default function LeftPanel() {
   const { activeTool, setActiveTool, layers, setLayer, confidenceFilter, setConfidenceFilter, clearMeasurements } = useSystemStore();
@@ -61,7 +61,7 @@ export default function LeftPanel() {
                     {layer.label}
                   </div>
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                    <StatusIndicator status={layer.status as any} label="" />
+                    <StatusIndicator status={layer.status as 'ACTIVE' | 'IDLE' | 'WARN'} label="" />
                   </div>
                 </button>
               );
@@ -76,7 +76,7 @@ export default function LeftPanel() {
             {['ALL', 'OBSERVED', 'INFERRED', 'UNKNOWN'].map((filter) => (
               <button
                 key={filter}
-                onClick={() => setConfidenceFilter(filter as any)}
+                onClick={() => setConfidenceFilter(filter as 'ALL' | 'OBSERVED' | 'INFERRED' | 'UNKNOWN')}
                 className={`px-2 py-1 text-[9px] border transition-all ${
                   confidenceFilter === filter
                     ? 'bg-[#dcdde1] text-[#0a0c0d] border-[#dcdde1]'
@@ -100,7 +100,7 @@ export default function LeftPanel() {
             ].map((tool) => (
               <button
                 key={tool.id}
-                onClick={() => setActiveTool(tool.id as any)}
+                onClick={() => setActiveTool(tool.id as 'DISTANCE' | 'HEIGHT' | 'AREA')}
                 className={`flex items-center gap-3 text-left px-3 py-2 text-[10px] border transition-all ${
                   activeTool === tool.id
                     ? 'bg-[#fbc531] text-[#0a0c0d] border-[#fbc531]'

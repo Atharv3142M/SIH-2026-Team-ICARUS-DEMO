@@ -7,8 +7,6 @@ import { useSystemStore } from '@/store/useSystemStore';
 export default function MeasurementLine() {
   const { measurePoints, activeTool } = useSystemStore();
 
-  if (measurePoints.length < 2) return null;
-
   const isArea = activeTool === 'AREA';
 
   const { points, label, center } = useMemo(() => {
@@ -44,6 +42,8 @@ export default function MeasurementLine() {
       };
     }
   }, [measurePoints, isArea]);
+
+  if (measurePoints.length < 2) return null;
 
   return (
     <group>

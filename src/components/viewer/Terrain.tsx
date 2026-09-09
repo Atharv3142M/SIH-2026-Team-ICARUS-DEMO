@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo } from 'react';
 import { Grid, Text } from '@react-three/drei';
-import * as THREE from 'three';
 
 export default function Terrain() {
   const labels = useMemo(() => {
